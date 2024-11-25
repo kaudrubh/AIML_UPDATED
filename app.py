@@ -14,11 +14,12 @@ st.set_page_config(
     layout="wide"
 )
 
-
-
 # Title and description
 st.title("🛡️ Cyber Threat Detection")
-st.markdown()
+st.markdown("""
+    This application uses a machine learning model to predict the category of a cyber threat (SS, A, or S) based on provided parameters. 
+    Fill in the fields below to get the predicted threat category.
+""")
 
 # Sidebar for feature inputs
 st.sidebar.header("📋 Input Features")
