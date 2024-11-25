@@ -18,7 +18,12 @@ st.set_page_config(
 
 # Title and description
 st.title("🛡️ Cyber Threat Detection")
-st.markdown("""
+st.markdown()
+
+# Sidebar for feature inputs
+st.sidebar.header("📋 Input Features")
+with st.sidebar.expander("ℹ️ Instructions", expanded=True):
+    st.write("""
         - **Time**: Enter the time in seconds.
         - **Protocol**: Select the protocol used (e.g., TCP or UDP).
         - **Flag**: Choose the packet flag type (e.g., A, B, C).
@@ -32,14 +37,6 @@ st.markdown("""
         - **IP Address**: Enter the IP address of the source or destination.
         - **Threat Type**: Choose the type of cyber threat (e.g., Botnet, DDoS, Phishing).
         - **Port**: Select the port number being used.
-    """)
-
-# Sidebar for feature inputs
-st.sidebar.header("📋 Input Features")
-with st.sidebar.expander("ℹ️ Instructions", expanded=True):
-    st.write("""
-        - Fill in the fields below with the respective information.
-        - Click **Predict** to see the cyber threat category.
     """)
 
 # Input fields for features
