@@ -70,8 +70,4 @@ if st.button("🔍 Predict", use_container_width=True):
         prediction_label = target_encoder.inverse_transform(prediction)[0]
         st.success(f"The predicted cyber threat is: **{prediction_label}**")
 
-# Footer with credits
-st.markdown("---")
-st.markdown("Created with ❤️ by Kaustubh")
-st.markdown("[GitHub](https://github.com/) | [LinkedIn](https://linkedin.com)")
 
