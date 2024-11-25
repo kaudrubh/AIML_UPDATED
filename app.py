@@ -2,82 +2,105 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# Load pre-trained model and preprocessing tools
-rf_model = joblib.load('random_forest_model.pkl')
+# Load saved model and encoders
+model = joblib.load('random_forest_model.pkl')
 label_encoders = joblib.load('label_encoders.pkl')
 target_encoder = joblib.load('target_encoder.pkl')
 
-# Set Page Configuration
+# Set page configuration
 st.set_page_config(
-    page_title="Cyber Threat Prediction",
+    page_title="Cyber Threat Detection",
     page_icon="🛡️",
     layout="wide"
 )
 
-# Add a header
-st.title("🔒 Cyber Threat Prediction")
+# Custom styling
+st.markdown("""
+    <style>
+        .stApp {
+            background-color: #f4f8f9;
+            font-family: 'Arial', sans-serif;
+        }
+        .stSidebar {
+            background-color: #1d2b36;
+            color: white;
+        }
+        .stSidebar .sidebar-content {
+            color: white;
+        }
+        .stButton>button {
+            background-color: #0077cc;
+            color: white;
+            border-radius: 5px;
+            height: 45px;
+            font-size: 16px;
+            width: 100%;
+        }
+        .stButton>button:hover {
+            background-color: #005fa3;
+        }
+        .stTitle {
+            color: #2e3b4e;
+            font-size: 2rem;
+        }
+        .stMarkdown {
+            font-size: 1.2rem;
+        }
+        .stNumberInput, .stSelectbox, .stSlider {
+            background-color: #ffffff;
+            border-radius: 5px;
+            padding: 10px;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
-st.write(
-    "Upload your data or fill in the fields below to predict **cyber threat categories**. 🕵️‍♂️"
-)
+# Title and description
+st.title("🛡️ Cyber Threat Detection")
+st.markdown("""
+    Welcome to the **Cyber Threat Detection** app! This app uses machine learning to predict cyber threats based on various features.
+    Enter the data in the sidebar and click **Predict** to get the result.
+""")
 
 # Sidebar for feature inputs
 st.sidebar.header("📋 Input Features")
-with st.sidebar.expander("ℹ️ Instructions"):
-    st.write(
-        """
-        - Provide numerical and categorical inputs.
-        - Click **Predict** to see the result.
-        """
-    )
+with st.sidebar.expander("ℹ️ Instructions", expanded=True):
+    st.write("""
+        - Fill in the fields below with the respective information.
+        - Click **Predict** to see the cyber threat category.
+    """)
 
-# Collecting user inputs
-input_data = {
-    "Time": st.sidebar.number_input("Time (in seconds)", value=10, help="Time in seconds."),
-    "Protcol": st.sidebar.selectbox("Protocol", list(label_encoders['Protcol'].classes_), help="Select the communication protocol."),
-    "Flag": st.sidebar.selectbox("Flag", list(label_encoders['Flag'].classes_), help="Select the packet flag."),
-    "Family": st.sidebar.selectbox("Malware Family", list(label_encoders['Family'].classes_)),
-    "Clusters": st.sidebar.slider("Clusters", 1, 12, value=1, help="Select cluster count."),
+# Input fields for features
+features = {
+    "Time": st.sidebar.number_input("Time (in seconds)", min_value=0, value=10, help="Enter time in seconds."),
+    "Protcol": st.sidebar.selectbox("Protocol", list(label_encoders['Protcol'].classes_)),
+    "Flag": st.sidebar.selectbox("Flag", list(label_encoders['Flag'].classes_)),
+    "Family": st.sidebar.selectbox("Family", list(label_encoders['Family'].classes_)),
+    "Clusters": st.sidebar.number_input("Clusters", min_value=0, value=1),
     "SeddAddress": st.sidebar.selectbox("Sender Address", list(label_encoders['SeddAddress'].classes_)),
     "ExpAddress": st.sidebar.selectbox("Receiver Address", list(label_encoders['ExpAddress'].classes_)),
-    "BTC": st.sidebar.number_input("BTC Amount", value=1),
-    "USD": st.sidebar.number_input("USD Amount", value=500),
-    "Netflow_Bytes": st.sidebar.number_input("Netflow Bytes", value=500),
+    "BTC": st.sidebar.number_input("BTC Amount", min_value=0, value=1),
+    "USD": st.sidebar.number_input("USD Amount", min_value=0, value=500),
+    "Netflow_Bytes": st.sidebar.number_input("Netflow Bytes", min_value=0, value=500),
     "IPaddress": st.sidebar.selectbox("IP Address", list(label_encoders['IPaddress'].classes_)),
     "Threats": st.sidebar.selectbox("Threat Type", list(label_encoders['Threats'].classes_)),
-    "Port": st.sidebar.slider("Port", 5061, 5068, value=5061),
+    "Port": st.sidebar.number_input("Port", min_value=0, value=5061),
 }
 
-# Convert input data to a DataFrame
-input_df = pd.DataFrame([input_data])
+# Convert categorical inputs using label encoders
+for key in features:
+    if key in label_encoders:
+        features[key] = label_encoders[key].transform([features[key]])[0]
 
-# Preprocess the input
-try:
-    # Apply label encoding for categorical variables
-    for col, le in label_encoders.items():
-        if col in input_df:
-            input_df[col] = le.transform(input_df[col])
-    
-    # Scale numerical features
-    numerical_columns = input_df.select_dtypes(include="number").columns
-    input_df[numerical_columns] = scaler.transform(input_df[numerical_columns])
-except Exception as e:
-    st.error(f"An error occurred during preprocessing: {e}")
-
-# Prediction button
-if st.button("🔍 Predict"):
+# Predict button
+if st.button("🔍 Predict", use_container_width=True):
     with st.spinner("Processing..."):
-        try:
-            # Make the prediction using the model
-            prediction = rf_model.predict(input_df)
-            
-            # Convert the predicted label back to the original category
-            predicted_label = le_prediction.inverse_transform(prediction)[0]
-            st.success(f"The predicted cyber threat category is: **{predicted_label}**")
-        except Exception as e:
-            st.error(f"An error occurred during prediction: {e}")
+        input_data = pd.DataFrame([features])
+        prediction = model.predict(input_data)
+        prediction_label = target_encoder.inverse_transform(prediction)[0]
+        st.success(f"The predicted cyber threat is: **{prediction_label}**")
 
-# Footer with some credits or notes
+# Footer with credits
 st.markdown("---")
-st.write("Created with ❤️ by [Your Name]")
-st.write("[GitHub](https://github.com/) | [LinkedIn](https://linkedin.com)")
+st.markdown("Created with ❤️ by [Your Name]")
+st.markdown("[GitHub](https://github.com/) | [LinkedIn](https://linkedin.com)")
+
