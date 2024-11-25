@@ -16,11 +16,6 @@ st.set_page_config(
 
 # Add a header
 st.title("🔒 Cyber Threat Prediction")
-st.markdown("""
-<style>
-    .stSidebar {background-color: #f0f2f6;}
-</style>
-""", unsafe_allow_html=True)
 
 st.write(
     "Upload your data or fill in the fields below to predict **cyber threat categories**. 🕵️‍♂️"
