@@ -19,9 +19,20 @@ st.set_page_config(
 # Title and description
 st.title("🛡️ Cyber Threat Detection")
 st.markdown("""
-    Welcome to the **Cyber Threat Detection** app! This app uses machine learning to predict cyber threats based on various features.
-    Enter the data in the sidebar and click **Predict** to get the result.
-""")
+        - **Time**: Enter the time in seconds.
+        - **Protocol**: Select the protocol used (e.g., TCP or UDP).
+        - **Flag**: Choose the packet flag type (e.g., A, B, C).
+        - **Family**: Select the malware family (e.g., WannaCry, Petya).
+        - **Clusters**: Use the slider to select the number of clusters.
+        - **Sender Address**: Enter the sender's address (e.g., a Bitcoin address).
+        - **Receiver Address**: Enter the receiver's address (e.g., another Bitcoin address).
+        - **BTC Amount**: Enter the Bitcoin amount involved in the transaction.
+        - **USD Amount**: Enter the corresponding USD amount for the transaction.
+        - **Netflow Bytes**: Enter the amount of data in bytes being transmitted.
+        - **IP Address**: Enter the IP address of the source or destination.
+        - **Threat Type**: Choose the type of cyber threat (e.g., Botnet, DDoS, Phishing).
+        - **Port**: Select the port number being used.
+    """)
 
 # Sidebar for feature inputs
 st.sidebar.header("📋 Input Features")
