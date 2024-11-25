@@ -71,6 +71,6 @@ if st.button("🔍 Predict", use_container_width=True):
 
 # Footer with credits
 st.markdown("---")
-st.markdown("Created with ❤️ by [Your Name]")
+st.markdown("Created with ❤️ by Kaustubh")
 st.markdown("[GitHub](https://github.com/) | [LinkedIn](https://linkedin.com)")
 
