@@ -7,7 +7,6 @@ rf_model = joblib.load('random_forest_model.pkl')
 label_encoders = joblib.load('label_encoders.pkl')
 target_encoder = joblib.load('target_encoder.pkl')
 
-
 # Set Page Configuration
 st.set_page_config(
     page_title="Cyber Threat Prediction",
@@ -15,63 +14,37 @@ st.set_page_config(
     layout="wide"
 )
 
-# Add custom CSS for aesthetics
+# Add a header
+st.title("🔒 Cyber Threat Prediction")
 st.markdown("""
-    <style>
-        .stApp {
-            background-color: #f4f8f9;
-        }
-        .stSidebar {
-            background-color: #001f3d;
-        }
-        .sidebar .sidebar-content {
-            color: white;
-        }
-        .stButton>button {
-            background-color: #0077cc;
-            color: white;
-            border-radius: 5px;
-            height: 40px;
-            font-size: 16px;
-        }
-        .stButton>button:hover {
-            background-color: #005fa3;
-        }
-        .stMarkdown {
-            font-family: 'Arial', sans-serif;
-        }
-    </style>
+<style>
+    .stSidebar {background-color: #f0f2f6;}
+</style>
 """, unsafe_allow_html=True)
 
-# Add a header with an emoji and banner image
-st.title("🛡️ Cyber Threat Prediction")
-st.image("https://via.placeholder.com/800x200?text=Cyber+Threat+Prediction", use_column_width=True)
+st.write(
+    "Upload your data or fill in the fields below to predict **cyber threat categories**. 🕵️‍♂️"
+)
 
-# Main Description
-st.markdown("""
-    Welcome to the **Cyber Threat Prediction** app! This tool uses machine learning to predict cyber threats based on various factors.  
-    Simply input your data below and click the **Predict** button to see the results.
-""")
-
-# Sidebar with a background color and instructions
+# Sidebar for feature inputs
 st.sidebar.header("📋 Input Features")
-with st.sidebar.expander("ℹ️ Instructions", expanded=True):
+with st.sidebar.expander("ℹ️ Instructions"):
     st.write(
         """
-        - Enter values for the features.
-        - Click **Predict** to view the predicted cyber threat category.
+        - Provide numerical and categorical inputs.
+        - Click **Predict** to see the result.
         """
     )
 
 # Collecting user inputs
 input_data = {
     "Time": st.sidebar.number_input("Time (in seconds)", value=10, help="Time in seconds."),
-    "Protocol": st.sidebar.selectbox("Protocol", list(label_encoders['Protocol'].classes_), help="Select the communication protocol."),
+    "Protcol": st.sidebar.selectbox("Protocol", list(label_encoders['Protcol'].classes_), help="Select the communication protocol."),
     "Flag": st.sidebar.selectbox("Flag", list(label_encoders['Flag'].classes_), help="Select the packet flag."),
     "Family": st.sidebar.selectbox("Malware Family", list(label_encoders['Family'].classes_)),
     "Clusters": st.sidebar.slider("Clusters", 1, 12, value=1, help="Select cluster count."),
-    "Sender Address": st.sidebar.selectbox("Sender Address", list(label_encoders['Sender Address'].classes_)),
-    "Exp Address": st.sidebar.selectbox("Receiver Address", list(label_encoders['Exp Address'].classes_)),
+    "SeddAddress": st.sidebar.selectbox("Sender Address", list(label_encoders['SeddAddress'].classes_)),
+    "ExpAddress": st.sidebar.selectbox("Receiver Address", list(label_encoders['ExpAddress'].classes_)),
     "BTC": st.sidebar.number_input("BTC Amount", value=1),
     "USD": st.sidebar.number_input("USD Amount", value=500),
     "Netflow_Bytes": st.sidebar.number_input("Netflow Bytes", value=500),
@@ -85,6 +58,7 @@ input_df = pd.DataFrame([input_data])
 
 # Preprocess the input
 try:
+    # Apply label encoding for categorical variables
     for col, le in label_encoders.items():
         if col in input_df:
             input_df[col] = le.transform(input_df[col])
@@ -95,23 +69,18 @@ try:
 except Exception as e:
     st.error(f"An error occurred during preprocessing: {e}")
 
-# Prediction button with custom style
+# Prediction button
 if st.button("🔍 Predict"):
     with st.spinner("Processing..."):
         try:
+            # Make the prediction using the model
             prediction = rf_model.predict(input_df)
-            st.success(
-                f"The predicted cyber threat category is: **{le_prediction.inverse_transform(prediction)[0]}**"
-            )
+            
+            # Convert the predicted label back to the original category
+            predicted_label = le_prediction.inverse_transform(prediction)[0]
+            st.success(f"The predicted cyber threat category is: **{predicted_label}**")
         except Exception as e:
             st.error(f"An error occurred during prediction: {e}")
-
-# Add some charts (e.g., Bar chart or Line chart) to show data or predictions
-st.markdown("### 📊 Data Overview")
-st.write(input_df)
-
-# Display a basic bar chart or other chart based on predictions or input data
-st.bar_chart(input_df["BTC"])  # For illustration, could be any numerical column
 
 # Footer with some credits or notes
 st.markdown("---")
