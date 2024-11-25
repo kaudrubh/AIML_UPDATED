@@ -14,45 +14,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom styling
-st.markdown("""
-    <style>
-        .stApp {
-            background-color: #f4f8f9;
-            font-family: 'Arial', sans-serif;
-        }
-        .stSidebar {
-            background-color: #1d2b36;
-            color: white;
-        }
-        .stSidebar .sidebar-content {
-            color: white;
-        }
-        .stButton>button {
-            background-color: #0077cc;
-            color: white;
-            border-radius: 5px;
-            height: 45px;
-            font-size: 16px;
-            width: 100%;
-        }
-        .stButton>button:hover {
-            background-color: #005fa3;
-        }
-        .stTitle {
-            color: #2e3b4e;
-            font-size: 2rem;
-        }
-        .stMarkdown {
-            font-size: 1.2rem;
-        }
-        .stNumberInput, .stSelectbox, .stSlider {
-            background-color: #ffffff;
-            border-radius: 5px;
-            padding: 10px;
-        }
-    </style>
-""", unsafe_allow_html=True)
+
 
 # Title and description
 st.title("🛡️ Cyber Threat Detection")
